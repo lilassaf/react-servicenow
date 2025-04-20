@@ -1,4 +1,5 @@
 import Loginform from "../../components/auth/loginform";
+import { Link } from "react-router-dom";
 
 function Login() {
   return (
@@ -17,9 +18,7 @@ function Login() {
         <Loginform></Loginform>
 
         <div className="mt-6 text-blue-500 text-center">
-          <a href="#" className="hover:underline">
-            Sign up Here
-          </a>
+          <Link className="hover:underline" to="//register"> Sign up Here</Link>
         </div>
       </div>
     </div>
