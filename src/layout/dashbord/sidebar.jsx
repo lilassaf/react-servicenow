@@ -31,7 +31,7 @@ const Sidebar = () => {
         <nav className="h-[calc(100vh-180px)] overflow-y-auto">
           <ul className="space-y-6">
             {[
-              { path: '/dashboard', icon: 'dashboard', text: 'Tableau de bord' },
+              { path: '/dashboard', icon: 'dashboard', text: 'Dashboard' },
             ].map((item) => {
               const isActive = location.pathname.toLowerCase() === item.path.toLowerCase();
               return (
@@ -58,7 +58,7 @@ const Sidebar = () => {
             className="w-full flex items-center p-4 text-gray-600 hover:bg-red-50 rounded-lg hover:bg-orange-100 hover:text-orange-600/80"
           >
             <i className="ri-shut-down-line mr-3 text-lg" />
-            <span className="font-medium">Déconnexion</span>
+            <span className="font-medium">logout</span>
           </button>
         </div>
       </aside>
