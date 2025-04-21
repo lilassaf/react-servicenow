@@ -15,7 +15,7 @@ function Register () {
             className="object-cover w-full h-full"
           />
         </div>
-  
+        
        
       </div> );
 }
