@@ -20,6 +20,21 @@ export default [
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
     },
+    // 🆕 Add this settings section for path aliases
+    settings: {
+      'import/resolver': {
+        alias: {
+          map: [
+            ['@', './src'],
+            ['@public', './public'],
+            ['@image', './public/images'],
+            ['@components', './src/components'],
+            ['@assets', './src/assets']
+          ],
+          extensions: ['.js', '.jsx', '.json']
+        }
+      }
+    },
     rules: {
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,

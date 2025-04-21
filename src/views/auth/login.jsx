@@ -18,7 +18,7 @@ function Login() {
         <Loginform></Loginform>
 
         <div className="mt-6 text-blue-500 text-center">
-          <Link className="hover:underline" to="//register"> Sign up Here</Link>
+          <Link className="hover:underline" to="/register"> Sign up Here</Link>
         </div>
       </div>
     </div>
