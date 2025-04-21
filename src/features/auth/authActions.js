@@ -5,72 +5,96 @@ const backendURL = import.meta.env.MODE !== 'production'
   ? 'http://localhost:5000'
   : import.meta.env.VITE_SERVER_URL;
 
-  export const userLogin = createAsyncThunk(
-    '/login',
-    async ({ username, password }, { rejectWithValue }) => {
-      try {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        };
-  
-        const { data } = await axios.post(
-          `${backendURL}/api/get-token`,
-          { username, password },
-          config
-        );
-  
-        // Store the correct token in localStorage
-        localStorage.setItem('access_token', data.access_token); // Update to store access_token
-        return data;
-      } catch (error) {
-        if (error.response && error.response.data.message) {
-          return rejectWithValue(error.response.data.message);
-        } else {
-          return rejectWithValue(error.message);
-        }
-      }
-    }
-  );
+export const userLogin = createAsyncThunk(
+  'auth/login',
+  async ({ username, password }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
 
-  export const registerUser = createAsyncThunk(
-    'auth/register',
-    async ({ 
-      user_name, 
-      user_password, 
-      first_name, 
-      last_name, 
-      email, 
-      mobile_phone 
-    }, { rejectWithValue }) => {
-      try {
-        const config = {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        };
-  
-        const { data } = await axios.post(
-          `${backendURL}/api/create-user`,
-          { 
-            user_name,
-            user_password,
-            first_name,
-            last_name,
-            email,
-            mobile_phone 
-          },
-          config
-        );
-  
-        return data;
-      } catch (error) {
-        if (error.response && error.response.data.message) {
-          return rejectWithValue(error.response.data.message);
-        } else {
-          return rejectWithValue(error.message);
-        }
+      const { data } = await axios.post(
+        `${backendURL}/api/get-token`,
+        { username, password },
+        config
+      );
+
+      localStorage.setItem('access_token', data.access_token);
+      return data;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
       }
+      return rejectWithValue(error.message);
     }
-  );
+  }
+);
+
+export const registerUser = createAsyncThunk(
+  'auth/register',
+  async ({ 
+    user_name, 
+    user_password, 
+    first_name, 
+    last_name, 
+    email, 
+    mobile_phone 
+  }, { rejectWithValue }) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      };
+
+      const { data } = await axios.post(
+        `${backendURL}/api/create-user`,
+        { user_name, user_password, first_name, last_name, email, mobile_phone },
+        config
+      );
+
+      return data;
+    } catch (error) {
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      }
+      return rejectWithValue(error.message);
+    }
+  }
+);
+
+export const userLogout = createAsyncThunk(
+  'auth/logout',
+  async () => {
+    try {
+      const token = localStorage.getItem('access_token');
+      
+      // Always clear client-side storage immediately
+      localStorage.removeItem('access_token');
+      
+      // Only attempt API logout if we have a token
+      if (token) {
+        await axios.post(
+          `${backendURL}/api/logout`,
+          {},
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            // Important for cookies to be included
+            withCredentials: true
+          }
+        );
+      }
+      
+      return true;
+    } catch (error) {
+      console.error('Logout API error:', error);
+      // Even if API fails, we consider logout successful on client side
+      return true;
+    }
+  }
+);

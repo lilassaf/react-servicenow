@@ -74,7 +74,11 @@ function LoginForm() {
           disabled={loading}
         />
       </div>
-
+      {error && (
+  <div className="mb-4 text-red-500 text-sm">
+    Login failed. Please check your username and password.
+  </div>
+)}
       <button
         type="submit"
         disabled={loading}
