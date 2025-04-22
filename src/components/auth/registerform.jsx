@@ -1,16 +1,12 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { registerUser } from "../../features/auth/authActions";
-import { useNavigate } from 'react-router-dom';
-
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
-
   const { loading, error } = useSelector((state) => state.auth);
   
-  // State for form inputs
+  // State for form inputs and success message
   const [formData, setFormData] = useState({
     user_name: '',
     user_password: '',
@@ -19,6 +15,7 @@ const RegisterForm = () => {
     email: '',
     mobile_phone: ''
   });
+  const [successMessage, setSuccessMessage] = useState('');
 
   const handleChange = (e) => {
     setFormData({
@@ -29,13 +26,14 @@ const RegisterForm = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    setSuccessMessage(''); // Clear any previous success message
     
     try {
       const result = await dispatch(registerUser(formData));
       
       if (registerUser.fulfilled.match(result)) {
-        alert('Registration successful!');
-        navigate('/login');
+        setSuccessMessage('Registration successful! You can now log in with your credentials.');
+        
         // Reset form after successful registration
         setFormData({
           user_name: '',
@@ -53,6 +51,21 @@ const RegisterForm = () => {
 
   return (
     <form onSubmit={handleRegister}>
+      {/* Show success message if it exists */}
+      {successMessage && (
+        <div className="mb-4 p-3 bg-green-100 text-green-700 rounded-md">
+          {successMessage}
+        </div>
+      )}
+
+      {/* Show error message if it exists */}
+      {error && (
+        <div className="mb-4 p-3 bg-red-100 text-red-700 rounded-md">
+          {error}
+        </div>
+      )}
+
+      {/* Form fields remain the same as before */}
       <div className="mb-4">
         <label htmlFor="user_name" className="block text-gray-600">
           Username
@@ -147,12 +160,6 @@ const RegisterForm = () => {
           autoComplete="tel"
         />
       </div>
-
-      {error && (
-        <div className="mb-4 text-red-500 text-sm">
-          {error}
-        </div>
-      )}
 
       <button
         type="submit"
