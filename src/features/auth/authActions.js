@@ -21,7 +21,7 @@ export const userLogin = createAsyncThunk(
         config
       );
 
-      localStorage.setItem('access_token', data.access_token);
+      //localStorage.setItem('access_token', `Bearer ${data.access_token}`);
       return data;
     } catch (error) {
       if (error.response && error.response.data.message) {
@@ -81,7 +81,7 @@ export const userLogout = createAsyncThunk(
           {},
           {
             headers: {
-              'Authorization': `Bearer ${token}`,
+              'Authorization': token,
               'Content-Type': 'application/json'
             },
             // Important for cookies to be included

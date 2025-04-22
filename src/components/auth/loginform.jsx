@@ -33,7 +33,7 @@ function LoginForm() {
     try {
       const response = await dispatch(userLogin(formData));
       if (response?.payload?.id_token) {
-        localStorage.setItem('access_token', response.payload.id_token);
+        localStorage.setItem('access_token', `Bearer ${response.payload.id_token}`);
         navigate('/dashboard');
       }
     } catch (err) {
