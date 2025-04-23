@@ -8,8 +8,8 @@ function Table({colNames, colBodyContent, onDelete, onUpdateStatus, onUpdate, st
         
     }
     return(
-        <div className="table-container">
-          <table className="table">
+        <div className="">
+          <table className="table-auto border-collapse border border-gray-400">
             <thead>
                 <Row type="head" colNames={colNames} />
             </thead>
