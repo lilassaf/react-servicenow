@@ -32,7 +32,9 @@ const Sidebar = () => {
           <ul className="space-y-6">
             {[
               { path: '/dashboard', icon: 'dashboard', text: 'Dashboard' },
+
               { path: '/product-offering', icon: 'dashboard', text: 'Product Offering' },
+
             ].map((item) => {
               const isActive = location.pathname.toLowerCase() === item.path.toLowerCase();
               return (
@@ -59,7 +61,9 @@ const Sidebar = () => {
             className="w-full flex items-center p-2 text-gray-600 hover:bg-gray-50 hover:text-cyan-600/80"
           >
             <i className="ri-shut-down-line mr-3 text-lg" />
+
             <span className="font-medium">Logout</span>
+
           </button>
         </div>
       </aside>
