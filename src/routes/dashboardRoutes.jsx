@@ -1,6 +1,6 @@
 // src/routes/dashboardRoutes.jsx
 import React from 'react';
-import PrivateRoute from '../components/PrivateRoute'; // Make sure this exists
+import PrivateRoute from '../middleware/PrivateRoute'; // Make sure this exists
 import DashboardLayout from '../layout/dashbord';
 import Home from '../views/dashbord/Dashboard';
 
