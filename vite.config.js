@@ -6,6 +6,13 @@ import path from 'path' // 👈 Add this import
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
+  server:{
+    proxy: {
+      '/api': {
+        target: 'http://localhost:5000',
+        changeOrigin: true,
+      }}
+  },
   resolve: {
     alias: {
       // 👇 Add these aliases

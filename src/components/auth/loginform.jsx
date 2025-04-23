@@ -1,58 +1,93 @@
-function loginform() {
-    return ( 
-        <form action="#" method="POST">
-            <div className="mb-4">
-              <label htmlFor="username" className="block text-gray-600">
-                Username
-              </label>
-              <input
-                type="text"
-                id="username"
-                name="username"
-                className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                autoComplete="off"
-              />
-            </div>
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { userLogin } from '../../features/auth/authActions';
+import { useNavigate } from 'react-router-dom';
+
+function LoginForm() {
+  const [formData, setFormData] = useState({
+    username: '',
+    password: ''
+  });
   
-            <div className="mb-4">
-              <label htmlFor="password" className="block text-gray-600">
-                Password
-              </label>
-              <input
-                type="password"
-                id="password"
-                name="password"
-                className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-                autoComplete="off"
-              />
-            </div>
-  
-            <div className="mb-4 flex items-center">
-              <input
-                type="checkbox"
-                id="remember"
-                name="remember"
-                className="text-blue-500"
-              />
-              <label htmlFor="remember" className="text-gray-600 ml-2">
-                Remember Me
-              </label>
-            </div>
-  
-            <div className="mb-6 text-blue-500">
-              <a href="#" className="hover:underline">
-                Forgot Password?
-              </a>
-            </div>
-  
-            <button
-              type="submit"
-              className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full"
-            >
-              Login
-            </button>
-          </form>
-     );
+  const { loading, error } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Clear any potential stored values on mount
+  useEffect(() => {
+    setFormData({
+      username: '',
+      password: ''
+    });
+  }, []);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await dispatch(userLogin(formData));
+      if (response?.payload?.id_token) {
+        localStorage.setItem('access_token', `Bearer ${response.payload.id_token}`);
+        navigate('/dashboard');
+      }
+    } catch (err) {
+      console.error('Login error:', err.message);
+    }
+  };
+
+  return (
+    <form onSubmit={handleSubmit} autoComplete="off">
+      <div className="mb-4">
+        <label htmlFor="username" className="block text-gray-600">
+          Username
+        </label>
+        <input
+          type="text"
+          id="username"
+          name="username"
+          value={formData.username}
+          onChange={handleChange}
+          className={`w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 ${error ? 'border-red-500' : ''}`}
+          autoComplete="new-username"  // Changed from "username"
+          disabled={loading}
+        />
+      </div>
+
+      <div className="mb-4">
+        <label htmlFor="password" className="block text-gray-600">
+          Password
+        </label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          value={formData.password}
+          onChange={handleChange}
+          className={`w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 ${error ? 'border-red-500' : ''}`}
+          autoComplete="new-password"  // Changed from "current-password"
+          disabled={loading}
+        />
+      </div>
+      {error && (
+  <div className="mb-4 text-red-500 text-sm">
+    Login failed. Please check your username and password.
+  </div>
+)}
+      <button
+        type="submit"
+        disabled={loading}
+        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full disabled:bg-blue-400"
+      >
+        {loading ? 'Logging in...' : 'Login'}
+      </button>
+    </form>
+  );
 }
 
-export default loginform;
+export default LoginForm;

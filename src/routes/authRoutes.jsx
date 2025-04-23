@@ -2,11 +2,16 @@
 import React from 'react';
 import Register from '../views/auth/Register';
 import Login from '../views/auth/login';
+import PrivateRoute from '../components/PrivateRoute';
 
 // routes/auth.js
 const authRoutes = [
   { path: '/login', element: <Login /> },
-  { path: '/register', element: <Register /> },
+  { path: '/register', element:
+    <PrivateRoute>
+    <Register /> 
+    </PrivateRoute> 
+    },
   // ... other routes
 ];
 

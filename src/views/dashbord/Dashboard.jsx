@@ -1,6 +1,8 @@
+
+import ProductOffering from "../servicenow/product-offering/ProductOffering";
 function Dashboard() {
     return (<>
-        <div className="flex h-full" >ur in Dashboard</div>
+       <ProductOffering />
     </>);
 }
 
