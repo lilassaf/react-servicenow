@@ -75,7 +75,7 @@ function Header() {
   ];
   
   return (
-    <header className="p-5 sticky top-0 shadow-lg flex justify-end">
+    <header className="p-5 pb-2 sticky top-0 shadow-md flex justify-end">
       <div className="space-x-5 flex items-center">
         <div>
           <Badge count={5}>

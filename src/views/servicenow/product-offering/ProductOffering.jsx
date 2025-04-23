@@ -14,7 +14,7 @@ import { getall as getChannels } from '../../../features/servicenow/channel/chan
 import Table from '../../../utils/table/Table';
 import ProductOfferingForm from '../../../components/servicenow/product offering/ProductOfferingForm';
 
-function ProductOffering() {
+function ProductOffering({po_type}) {
   const dispatch = useDispatch();
 
   // Selectors
@@ -132,18 +132,30 @@ const handleUpdateSubmit = (editedData) => {
 };
 
   // Table configuration
-  const colNames = ['Name', 'Description', 'Product Specification', 'Start Date', 'End Date'];
-  const colBodyContent = products.map((product) => (product !== undefined && product.status!=="retired" && product.status!=="archived" ? {
-    id: product.id,
-    status: product.status,
-    content: [
-      product.displayName,
-      product.description,
-      product.productSpecification?.name || 'N/A',  // Added null safety
-      product.validFor.startDateTime,
-      product.validFor.endDateTime,
-    ],
-  } : ""));
+  const colNames = ['Name', 'Product Specification', 'Start Date', 'End Date', 'Action'];
+  
+  let t_head =[]; colNames.map((name)=>{
+    t_head.push(<th className={ name==="Action"? "w-1/4 text-left py-3 px-4 uppercase font-semibold text-sm":"text-left py-3 px-4 uppercase font-semibold text-sm"}>{name}</th>)
+  })
+
+  
+  const colBodyContent =[];
+
+
+  if(products.length > 0){
+    products.map((product) => (product.status === po_type ? colBodyContent.push(<tr key={product.sys_id} id={product.sys_id}>
+      <td className="text-left py-3 px-4">{product.name}</td>
+      <td className="text-left py-3 px-4">{product.productSpecification?.name || 'N/A'}</td>
+      <td className="text-left py-3 px-4">{product.validFor?.startDateTime}</td>
+      <td className="text-left py-3 px-4">{product.validFor?.startDateTime}</td>
+      <td className="text-left py-3 px-4">
+        {product.status === "draft" ? <button  onClick={() => handleUpdateStatus(product.sys_id,product.status)}  className="bg-blue-500 px-4 py-2 mx-1 w-20 text-white cursor-pointer">Publish</button> : <button onClick={() => handleUpdateStatus(product.id,product.status)}  className="bg-yellow-400 px-4 py-2 mx-1 w-20 text-white cursor-pointer">Retire</button>}
+      <button className="bg-gray-500 px-4 py-2 mx-1 w-20 text-white cursor-pointer" onClick={()=> handleOpenUpdateModal(product.id)}>Update</button>
+      <button onClick={() => handleDelete(product.id)} className="bg-red-400 mx-1 px-4 py-2 w-20 text-white cursor-pointer">Delete</button>
+      </td>
+    </tr>):""))
+  
+  }
 
   // Loading and error states
   const initialLoading = loading || specsLoading || catsLoading || channelsLoading;
@@ -202,15 +214,29 @@ const handleUpdateSubmit = (editedData) => {
       </button>
 
       {products.length > 0 ? (
-        <Table
-          colNames={colNames}
-          colBodyContent={colBodyContent}
-          onDelete={handleDelete}
-          onUpdateStatus={handleUpdateStatus}
-          onStatusToggle={handleUpdateStatus}
-          onUpdate={handleOpenUpdateModal}
-          stateManage={true}
-        />
+
+<div className="md:px-32 py-8 w-full">
+<div className="shadow overflow-hidden rounded border-b border-gray-200">
+  <table className="min-w-full bg-white">
+    <thead className="bg-cyan-700 text-white">
+      <tr>
+       {t_head}
+      </tr>
+    </thead>
+    <tbody className="text-gray-700">
+      {colBodyContent}
+    </tbody>
+    </table>
+    </div></div>
+        // <Table
+        //   colNames={colNames}
+        //   colBodyContent={colBodyContent}
+        //   onDelete={handleDelete}
+        //   onUpdateStatus={handleUpdateStatus}
+        //   onStatusToggle={handleUpdateStatus}
+        //   onUpdate={handleOpenUpdateModal}
+        //   stateManage={true}
+        // />
       ) : (
         !initialLoading && <div style={{ marginTop: '20px' }}>No product offerings found.</div>
       )}

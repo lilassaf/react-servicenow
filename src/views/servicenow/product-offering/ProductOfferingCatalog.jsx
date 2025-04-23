@@ -146,10 +146,26 @@ function ProductOfferingCatalog() {
    const addButtonStyle = { ...buttonStyle, backgroundColor: '#007bff', color: 'white', marginBottom: '20px' };
 
 
-  const colNames= ["Name", "Description", "Start Date", "End Date"];
+  const colNames= ["Name", "Description", "Start Date", "End Date", "Action"];
+  let t_head =[]; colNames.map((name)=>{
+    t_head.push(<th className={ name==="Action"? "w-1/4 text-left py-3 px-4 uppercase font-semibold text-sm":"text-left py-3 px-4 uppercase font-semibold text-sm"}>{name}</th>)
+  })
   const colBodyContent = [];
+  // if(products.length > 0){
+  //   products.map((product) => (colBodyContent.push({id:product.sys_id, status:product.status, content: [product.name, product.description, product.start_date, product.end_date]})))
+  
+  // }
   if(products.length > 0){
-    products.map((product) => (colBodyContent.push({id:product.sys_id, status:product.status, content: [product.name, product.description, product.start_date, product.end_date]})))
+    products.map((product) => (colBodyContent.push(<tr key={product.sys_id} id={product.sys_id}>
+      <td className="text-left py-3 px-4">{product.name}</td>
+      <td className="text-left py-3 px-4">{product.description}</td>
+      <td className="text-left py-3 px-4">{product.start_date}</td>
+      <td className="text-left py-3 px-4">{product.end_date}</td>
+      <td className="text-left py-3 px-4">
+      <button className="bg-gray-500 px-4 py-2 mx-1 text-white cursor-pointer" onClick={()=> handleOpenUpdateModal(product.sys_id)}>Update</button>
+      <button onClick={() => handleDelete(product.sys_id)} className="bg-red-400 mx-1 px-4 py-2 text-white cursor-pointer">Delete</button>
+      </td>
+    </tr>)))
   
   }
   return (
@@ -170,7 +186,25 @@ function ProductOfferingCatalog() {
        {loading && products.length > 0 && <div style={{marginBottom: '10px', fontStyle: 'italic', color: '#555'}}>Processing...</div>}
        
        {products.length > 0 ? (
-        <Table colNames={colNames} colBodyContent={colBodyContent} onDelete={handleDelete} onUpdateStatus={handleUpdateStatus} onUpdate={handleOpenUpdateModal} />
+        <div className="md:px-32 py-8 w-full">
+        <div className="shadow overflow-hidden rounded border-b border-gray-200">
+          <table className="min-w-full bg-white">
+            <thead className="bg-cyan-700 text-white">
+              <tr>
+               {t_head}
+              </tr>
+            </thead>
+            <tbody className="text-gray-700">
+              {colBodyContent}
+            </tbody>
+            </table>
+            </div>
+            
+            
+
+          
+        {/* <Table colNames={colNames} colBodyContent={colBodyContent} onDelete={handleDelete} onUpdateStatus={handleUpdateStatus} onUpdate={handleOpenUpdateModal} />  */}
+        </div>
       ) : (
         !loading && <div style={{ marginTop: '20px', fontStyle: 'italic' }}>No catalogs found.</div>
       )}
