@@ -1,9 +1,7 @@
 import axios from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
-const backendURL = import.meta.env.MODE !== 'production'
-  ? 'http://localhost:5000'
-  : import.meta.env.VITE_SERVER_URL;
+
 
 export const userLogin = createAsyncThunk(
   'auth/login',
@@ -16,7 +14,7 @@ export const userLogin = createAsyncThunk(
       };
 
       const { data } = await axios.post(
-        `${backendURL}/api/get-token`,
+        `/api/get-token`,
         { username, password },
         config
       );
@@ -50,7 +48,7 @@ export const registerUser = createAsyncThunk(
       };
 
       const { data } = await axios.post(
-        `${backendURL}/api/create-user`,
+        `/api/create-user`,
         { user_name, user_password, first_name, last_name, email, mobile_phone },
         config
       );
@@ -77,7 +75,7 @@ export const userLogout = createAsyncThunk(
       // Only attempt API logout if we have a token
       if (token) {
         await axios.post(
-          `${backendURL}/api/logout`,
+          `/api/logout`,
           {},
           {
             headers: {
