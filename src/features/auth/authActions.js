@@ -7,25 +7,26 @@ export const userLogin = createAsyncThunk(
   'auth/login',
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
       const { data } = await axios.post(
-        `/api/get-token`,
+        '/api/get-token',
         { username, password },
-        config
+        {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 8000
+        }
       );
-
-      //localStorage.setItem('access_token', `Bearer ${data.access_token}`);
       return data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
+      if (!error.response) {
+        return rejectWithValue({
+          type: 'network_error',
+          message: 'Network error. Please check your connection.'
+        });
       }
-      return rejectWithValue(error.message);
+      return rejectWithValue({
+        type: error.response.data?.error || 'authentication_error',
+        message: error.response.data?.message || 'Login failed'
+      });
     }
   }
 );
