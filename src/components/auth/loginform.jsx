@@ -1,3 +1,4 @@
+// LoginForm.js
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { userLogin } from '../../features/auth/authActions';
@@ -13,7 +14,6 @@ function LoginForm() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  // Clear any potential stored values on mount
   useEffect(() => {
     setFormData({
       username: '',
@@ -42,50 +42,54 @@ function LoginForm() {
   };
 
   return (
-    <form onSubmit={handleSubmit} autoComplete="off">
-      <div className="mb-4">
-        <label htmlFor="username" className="block text-gray-600">
-          Username
-        </label>
+    <form onSubmit={handleSubmit} autoComplete="off" className="w-full">
+      <div className="w-full flex flex-col gap-2 mb-4">
+        <label className="font-semibold text-xs text-gray-400 dark:text-gray-300">Username</label>
         <input
           type="text"
-          id="username"
           name="username"
           value={formData.username}
           onChange={handleChange}
-          className={`w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 ${error ? 'border-red-500' : ''}`}
-          autoComplete="new-username"  // Changed from "username"
+          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900 ${
+            error ? 'border-red-500' : 'focus:border-blue-500'
+          }`}
+          placeholder="Username"
+          autoComplete="new-username"
           disabled={loading}
         />
       </div>
 
-      <div className="mb-4">
-        <label htmlFor="password" className="block text-gray-600">
-          Password
-        </label>
+      <div className="w-full flex flex-col gap-2 mb-5">
+        <label className="font-semibold text-xs text-gray-400 dark:text-gray-300">Password</label>
         <input
           type="password"
-          id="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
-          className={`w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500 ${error ? 'border-red-500' : ''}`}
-          autoComplete="new-password"  // Changed from "current-password"
+          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900 ${
+            error ? 'border-red-500' : 'focus:border-blue-500'
+          }`}
+          placeholder="••••••••"
+          autoComplete="new-password"
           disabled={loading}
         />
       </div>
+
       {error && (
-  <div className="mb-4 text-red-500 text-sm">
-    Login failed. Please check your username and password.
-  </div>
-)}
-      <button
-        type="submit"
-        disabled={loading}
-        className="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-md py-2 px-4 w-full disabled:bg-blue-400"
-      >
-        {loading ? 'Logging in...' : 'Login'}
-      </button>
+        <div className="mb-4 text-red-500 text-sm">
+          Login failed. Please check your username and password.
+        </div>
+      )}
+
+      <div className="mt-5">
+        <button
+          type="submit"
+          disabled={loading}
+          className="py-1 px-8 bg-blue-500 hover:bg-blue-800 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none disabled:bg-blue-400 disabled:cursor-not-allowed"
+        >
+          {loading ? 'Logging in...' : 'Login'}
+        </button>
+      </div>
     </form>
   );
 }
