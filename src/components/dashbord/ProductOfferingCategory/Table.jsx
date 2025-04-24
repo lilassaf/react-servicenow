@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Popconfirm } from 'antd';
-import { getall, deleteCatalog } from '../../../features/servicenow/product-offering/productOfferingCatalogSlice';
+import { getall, deleteCategory } from '../../../features/servicenow/product-offering/productOfferingCategorySlice';
 
 function Table({setData , setOpen}) {
     const dispatch = useDispatch();
-    const { data: products, loading, error } = useSelector((state) => state.productOfferingCatalog);
+    const { data: products, loading, error } = useSelector((state) => state.productOfferingCategory);
 
     useEffect(() => {
         dispatch(getall());
@@ -13,7 +13,7 @@ function Table({setData , setOpen}) {
 
     const handleDelete = (productId) => {
         if (window.confirm('Are you sure you want to delete this product?')) {
-            dispatch(deleteCatalog(productId));
+            dispatch(deleteCategory(productId));
         }
     };
 
@@ -59,8 +59,8 @@ function Table({setData , setOpen}) {
 
 
                                 <Popconfirm
-                                    title="Delete the catalog"
-                                    description="Are you sure to delete this catalog?"
+                                    title="Delete the category"
+                                    description="Are you sure to delete this category?"
                                     icon={<i className="ri-error-warning-line text-red-600 mr-2"></i>}
                                     onConfirm={() => handleDelete(product.number)}
                                 >

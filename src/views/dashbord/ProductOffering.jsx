@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import Table from '../../components/dashbord/ProductOfferingCatalog/Table';
-import Form from '../../components/dashbord/ProductOfferingCatalog/Form';
+import React, { useState } from 'react';
+import Table from '../../components/dashbord/ProductOffering/Table';
+import Form from '../../components/dashbord/ProductOffering/Form';
 
 
-function ProductOfferingCatalog() {
+function ProductOffering() {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState(null); 
 
@@ -48,7 +48,7 @@ function ProductOfferingCatalog() {
           <Table setData={setData} setOpen={setOpen} ></Table>
         </div>
          
-         <Form open={open} setOpen={setOpen} initialData={data} ></Form>
+         {/* <Form open={open} setOpen={setOpen} initialData={data} ></Form> */}
 
 
       </div>
@@ -56,4 +56,4 @@ function ProductOfferingCatalog() {
   );
 }
 
-export default ProductOfferingCatalog;
+export default ProductOffering;
