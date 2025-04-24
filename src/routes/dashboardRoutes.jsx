@@ -2,7 +2,8 @@
 import React from 'react';
 import PrivateRoute from '../middleware/PrivateRoute'; // Make sure this exists
 import DashboardLayout from '../layout/dashbord';
-import Home from '../views/dashbord/Dashboard';
+import Home from '../views/dashbord'; 
+import Catalog from '../views/dashbord/ProductOfferingCatalog'; 
 
 const dashboardRoutes = {
   path: '/dashboard',
@@ -13,6 +14,7 @@ const dashboardRoutes = {
   ),
   children: [
     { index: true, element: <Home /> },
+    { path: 'catalog', element:<Catalog/>},
     // ... other dashboard sub-routes
   ],
 };

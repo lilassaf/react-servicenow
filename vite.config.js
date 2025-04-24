@@ -1,26 +1,26 @@
 import { defineConfig } from 'vite'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
-import path from 'path' // 👈 Add this import
+import * as path from 'path' // 🛠️ Fixed path import
 
-// https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  server:{
+  server: {
     proxy: {
       '/api': {
         target: 'http://localhost:5000',
         changeOrigin: true,
-      }}
+      }
+    }
   },
   resolve: {
     alias: {
-      // 👇 Add these aliases
       '@': path.resolve(__dirname, './src'),
       '@components': path.resolve(__dirname, './src/components'),
       '@assets': path.resolve(__dirname, './src/assets'),
       '@public': path.resolve(__dirname, './public'),
-      '@image': path.resolve(__dirname, './public/images'),
+      '@image': path.resolve(__dirname, './public/images'), // 🆕 Added missing alias
+      '@views': path.resolve(__dirname, './src/views'),
     }
   }
 })
