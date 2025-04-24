@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import { Modal } from 'antd';
-import { useDispatch } from 'react-redux';
 import { updateCatalog, createCatalog } from '../../../features/servicenow/product-offering/productOfferingCatalogSlice';
 
 const generateCodeFromName = (name) => {
@@ -25,8 +24,7 @@ const validationSchema = Yup.object().shape({
   code: Yup.string().required('Code is required'),
 });
 
-function ProductOfferingCatalogForm({ open, setOpen, initialData = null }) {
-  const dispatch = useDispatch();
+function ProductOfferingCatalogForm({ open, setOpen, initialData = null, dispatch }) {
   const isEditMode = Boolean(initialData);
 
   const formik = useFormik({

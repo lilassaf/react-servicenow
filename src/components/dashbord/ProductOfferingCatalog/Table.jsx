@@ -1,20 +1,18 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { Popconfirm } from 'antd';
+import { useSelector } from 'react-redux';
+import { Popconfirm, Empty } from 'antd';
 import { getall, deleteCatalog } from '../../../features/servicenow/product-offering/productOfferingCatalogSlice';
 
-function Table({setData , setOpen}) {
-    const dispatch = useDispatch();
+function Table({setData , setOpen, dispatch}) {
+    
     const { data: products, loading, error } = useSelector((state) => state.productOfferingCatalog);
 
     useEffect(() => {
         dispatch(getall());
     }, [dispatch]);
 
-    const handleDelete = (productId) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            dispatch(deleteCatalog(productId));
-        }
+    const handleDelete = async (productId) => {
+        await dispatch(deleteCatalog(productId));
     };
 
     function changeData(newData) {
@@ -62,7 +60,7 @@ function Table({setData , setOpen}) {
                                     title="Delete the catalog"
                                     description="Are you sure to delete this catalog?"
                                     icon={<i className="ri-error-warning-line text-red-600 mr-2"></i>}
-                                    onConfirm={() => handleDelete(product.number)}
+                                    onConfirm={() => handleDelete(product.sys_id)}
                                 >
                                     <button
                                         className="text-gray-500 hover:text-red-600 "

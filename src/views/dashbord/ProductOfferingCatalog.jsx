@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 import Table from '../../components/dashbord/ProductOfferingCatalog/Table';
 import Form from '../../components/dashbord/ProductOfferingCatalog/Form';
 
@@ -6,6 +7,7 @@ import Form from '../../components/dashbord/ProductOfferingCatalog/Form';
 function ProductOfferingCatalog() {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState(null); 
+  const dispatch = useDispatch();
 
   return (
     <>
@@ -45,10 +47,10 @@ function ProductOfferingCatalog() {
         </div>
 
         <div className='flex justify-center items-center py-5'>
-          <Table setData={setData} setOpen={setOpen} ></Table>
+          <Table setData={setData} setOpen={setOpen} dispatch={dispatch} ></Table>
         </div>
          
-         <Form open={open} setOpen={setOpen} initialData={data} ></Form>
+         <Form open={open} setOpen={setOpen} initialData={data} dispatch={dispatch} ></Form>
 
 
       </div>
