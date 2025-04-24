@@ -18,7 +18,7 @@ const dashboardRoutes = {
     { index: true, element: <Home /> },
     { path: 'catalog', element:<Catalog/>},
     { path: 'category', element:<POCategory/>},
-    { path: 'po', element:<PO/>},
+    { path: 'product-offering', element:<PO/>},
     // ... other dashboard sub-routes
   ],
 };
