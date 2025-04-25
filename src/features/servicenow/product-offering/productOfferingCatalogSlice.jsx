@@ -10,7 +10,7 @@ export const getall = createAsyncThunk(
       const response = await axios.get("/api/product-offering-catalog", {
         headers: { authorization: access_token },
       });
-      return response.data.result || [];
+      return response.data || [];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -25,7 +25,7 @@ export const getOne = createAsyncThunk(
       const response = await axios.get(`/api/product-offering-catalog/${id}`, {
         headers: { authorization: access_token },
       });
-      return response.data.result;
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }

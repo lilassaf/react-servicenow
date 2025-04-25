@@ -32,18 +32,19 @@ function ProductOfferingCatalogForm({ open, setOpen, initialData = null, dispatc
       name: initialData?.name || '',
       start_date: initialData?.start_date?.split(' ')[0] || '',
       end_date: initialData?.end_date?.split(' ')[0] || '',
-      status: initialData?.status || 'published',
+      status: initialData?.status || 'draft',
       description: initialData?.description || '',
       code: initialData?.code || '',
     },
     validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, {resetForm}) => {
       try {
         const action = isEditMode
-          ? updateCatalog({ id: initialData.id, ...values })
+          ? updateCatalog({ id: initialData.sys_id, ...values })
           : createCatalog(values);
         await dispatch(action).unwrap();
         setOpen(false);
+        resetForm();
       } catch (error) {
         console.error('Submission error:', error);
       }
@@ -130,7 +131,7 @@ function ProductOfferingCatalogForm({ open, setOpen, initialData = null, dispatc
         </div>
 
         {/* Status */}
-        <div>
+        {/* <div>
           <label className="block font-medium mb-1">Status</label>
           <select
             name="status"
@@ -148,7 +149,7 @@ function ProductOfferingCatalogForm({ open, setOpen, initialData = null, dispatc
           {formik.touched.status && formik.errors.status && (
             <p className="text-red-500 text-sm mt-1">{formik.errors.status}</p>
           )}
-        </div>
+        </div> */}
 
         {/* Description */}
         <div>
@@ -170,14 +171,14 @@ function ProductOfferingCatalogForm({ open, setOpen, initialData = null, dispatc
             type="button"
             onClick={handleCancel}
             disabled={formik.isSubmitting}
-            className="px-4 py-2 rounded border bg-gray-200 hover:bg-gray-300"
+            className="px-4 py-2 rounded border bg-gray-200 text-red-400 hover:bg-red-400 hover:text-white"
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={formik.isSubmitting}
-            className="px-4 py-2 rounded bg-blue-600 text-white hover:bg-blue-700"
+            className="px-4 py-2 rounded bg-cyan-700 text-white hover:bg-cyan-800"
           >
             {formik.isSubmitting
               ? isEditMode

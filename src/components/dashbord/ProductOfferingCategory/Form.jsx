@@ -28,24 +28,25 @@ const validationSchema = Yup.object().shape({
 function ProductOfferingCategoryForm({ open, setOpen, initialData = null }) {
   const dispatch = useDispatch();
   const isEditMode = Boolean(initialData);
-
   const formik = useFormik({
     initialValues: {
       name: initialData?.name || '',
       start_date: initialData?.start_date?.split(' ')[0] || '',
       end_date: initialData?.end_date?.split(' ')[0] || '',
-      status: initialData?.status || 'published',
+      status: initialData?.status || 'draft',
       description: initialData?.description || '',
       code: initialData?.code || '',
+      is_leaf: true,
     },
     validationSchema,
-    onSubmit: async (values) => {
+    onSubmit: async (values, {resetForm}) => {
       try {
         const action = isEditMode
-          ? updateCategory({ id: initialData.id, ...values })
+          ? updateCategory({ id: initialData.sys_id, ...values })
           : createCategory(values);
         await dispatch(action).unwrap();
         setOpen(false);
+        resetForm();
       } catch (error) {
         console.error('Submission error:', error);
       }
@@ -132,7 +133,7 @@ function ProductOfferingCategoryForm({ open, setOpen, initialData = null }) {
         </div>
 
         {/* Status */}
-        <div>
+        {/* <div>
           <label className="block font-medium mb-1">Status</label>
           <select
             name="status"
@@ -150,7 +151,7 @@ function ProductOfferingCategoryForm({ open, setOpen, initialData = null }) {
           {formik.touched.status && formik.errors.status && (
             <p className="text-red-500 text-sm mt-1">{formik.errors.status}</p>
           )}
-        </div>
+        </div> */}
 
         {/* Description */}
         <div>

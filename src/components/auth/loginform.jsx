@@ -97,6 +97,7 @@ function LoginForm() {
   };
 
   return (
+
     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
       {/* Message display */}
       {message.text && (
@@ -139,6 +140,7 @@ function LoginForm() {
   className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
   autoComplete="new-password"  // Override browser autofill
 />
+
       </div>
 
       <button

@@ -1,11 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Table from '../../components/dashbord/ProductOffering/Table';
 import Form from '../../components/dashbord/ProductOffering/Form';
-
+import { getall as getSpecs } from '../../features/servicenow/product-specification/productSpecificationSlice';
+import { getall as getCats } from '../../features/servicenow/product-offering/productOfferingCategorySlice';
+import { getall as getChannels } from '../../features/servicenow/channel/channelSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 function ProductOffering() {
   const [open, setOpen] = useState(false);
   const [data, setData] = useState(null); 
+
+  const dispatch = useDispatch();
+  // Selectors
+  const { data: specs, loading: specsLoading, error: specsError } = useSelector(
+    (state) => state.productSpecification
+  );
+  const { data: cats, loading: catsLoading, error: catsError } = useSelector(
+    (state) => state.productOfferingCategory
+  );
+  const { data: channels, loading: channelsLoading, error: channelsError } =
+    useSelector((state) => state.channel);
+  useEffect(() => {
+      if (localStorage.getItem('access_token')) {
+        dispatch(getSpecs());
+        dispatch(getCats());
+        dispatch(getChannels());
+      } else {
+        console.error('Auth token not found. Please login.');
+      }
+    }, [dispatch]);
+
+  const options = {specifications: specs, categories: cats, channels: channels}
 
   return (
     <>
@@ -28,7 +53,7 @@ function ProductOffering() {
             </div>
             <button
               className="overflow-hidden relative w-36 h-10 cursor-pointer flex items-center border border-cyan-700 bg-cyan-700 group hover:bg-cyan-700 active:bg-cyan-700 active:border-cyan-700"
-               onClick={() => setOpen(true)}
+               onClick={() => {setOpen(true);setData(null)}}
             >
               <span
                 className="text-gray-200 font-semibold ml-12 transform group-hover:translate-x-20 transition-all duration-300"
@@ -48,7 +73,7 @@ function ProductOffering() {
           <Table setData={setData} setOpen={setOpen} ></Table>
         </div>
          
-         {/* <Form open={open} setOpen={setOpen} initialData={data} ></Form> */}
+         <Form open={open} setOpen={setOpen} initialData={data} options={options}></Form>
 
 
       </div>

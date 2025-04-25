@@ -13,6 +13,7 @@ function Table({setData , setOpen, dispatch}) {
 
     const handleDelete = async (productId) => {
         await dispatch(deleteCatalog(productId));
+        await dispatch(getall());
     };
 
     function changeData(newData) {
@@ -31,6 +32,7 @@ function Table({setData , setOpen, dispatch}) {
                         <th className="px-3 py-3 whitespace-nowrap">Number</th>
                         <th className="px-3 py-3 whitespace-nowrap">Name</th>
                         <th className="px-3 py-3 whitespace-nowrap">Status</th>
+                        <th className="px-3 py-3 whitespace-nowrap">Start Date</th>
                         <th className="px-3 py-3 whitespace-nowrap">End Date</th>
                         <th className="px-3 py-3 whitespace-nowrap">Actions</th>
                     </tr>
@@ -46,6 +48,7 @@ function Table({setData , setOpen, dispatch}) {
                                     {product.status}
                                 </span>
                             </td>
+                            <td className="px-3 py-3 whitespace-nowrap">{product.start_date || 'N/A'}</td>
                             <td className="px-3 py-3 whitespace-nowrap">{product.end_date || 'N/A'}</td>
                             <td className="px-3 py-3 whitespace-nowrap">
                                 <button

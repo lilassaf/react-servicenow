@@ -11,10 +11,9 @@ function Table({setData , setOpen}) {
         dispatch(getall());
     }, [dispatch]);
 
-    const handleDelete = (productId) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            dispatch(deleteCategory(productId));
-        }
+    const handleDelete = async (productId) => {
+            await dispatch(deleteCategory(productId));
+            await dispatch(getall());
     };
 
     function changeData(newData) {
@@ -33,6 +32,7 @@ function Table({setData , setOpen}) {
                         <th className="px-3 py-3 whitespace-nowrap">Number</th>
                         <th className="px-3 py-3 whitespace-nowrap">Name</th>
                         <th className="px-3 py-3 whitespace-nowrap">Status</th>
+                        <th className="px-3 py-3 whitespace-nowrap">Start Date</th>
                         <th className="px-3 py-3 whitespace-nowrap">End Date</th>
                         <th className="px-3 py-3 whitespace-nowrap">Actions</th>
                     </tr>
@@ -48,6 +48,7 @@ function Table({setData , setOpen}) {
                                     {product.status}
                                 </span>
                             </td>
+                            <td className="px-3 py-3 whitespace-nowrap">{product.start_date || 'N/A'}</td>
                             <td className="px-3 py-3 whitespace-nowrap">{product.end_date || 'N/A'}</td>
                             <td className="px-3 py-3 whitespace-nowrap">
                                 <button
@@ -62,7 +63,7 @@ function Table({setData , setOpen}) {
                                     title="Delete the category"
                                     description="Are you sure to delete this category?"
                                     icon={<i className="ri-error-warning-line text-red-600 mr-2"></i>}
-                                    onConfirm={() => handleDelete(product.number)}
+                                    onConfirm={() => handleDelete(product.sys_id)}
                                 >
                                     <button
                                         className="text-gray-500 hover:text-red-600 "
