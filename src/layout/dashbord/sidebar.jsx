@@ -84,7 +84,7 @@ const Sidebar = () => {
                     </Link>
 
                     {hasChildren && isExpanded && (
-                      <ul className="ml-8 mt-1 space-y-1">
+                      <ul className="mt-1 space-y-1 translate-1">
                         {item.children.map((child) => (
                           <li key={child.path}>
                             <Link
