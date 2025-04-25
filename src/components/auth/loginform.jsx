@@ -23,10 +23,12 @@ const MESSAGE_MAPPINGS = {
 };
 
 function LoginForm() {
+  // Initialize with empty strings - no default credentials
   const [formData, setFormData] = useState({ 
-    username: '',  // No default value
-    password: ''   // No default value
+    username: '',
+    password: '' 
   });
+  
   const [message, setMessage] = useState({ text: '', type: '' });
   const { loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
@@ -60,7 +62,6 @@ function LoginForm() {
     e.preventDefault();
     setMessage({ text: '', type: '' });
 
-    // Client-side validation
     if (!formData.username.trim() || !formData.password.trim()) {
       setMessage({
         text: MESSAGE_MAPPINGS.validation_error,
@@ -108,41 +109,38 @@ function LoginForm() {
         </div>
       )}
 
-      {/* Username field - empty by default */}
+      {/* Username field - completely empty */}
       <div className="mb-4">
         <label htmlFor="username" className="block text-gray-600 mb-1">
           Username
         </label>
         <input
-          type="text"
-          id="username"
-          name="username"
-          value={formData.username}
-          onChange={(e) => setFormData({...formData, username: e.target.value})}
-          className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-          autoComplete="username"
-          disabled={loading}
-        />
+  type="text"
+  id="username"
+  name="username"
+  value={formData.username}
+  onChange={(e) => setFormData({...formData, username: e.target.value})}
+  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+  autoComplete="new-username"  // Override browser autofill
+/>
       </div>
 
-      {/* Password field - empty by default */}
+      {/* Password field - completely empty */}
       <div className="mb-6">
         <label htmlFor="password" className="block text-gray-600 mb-1">
           Password
         </label>
         <input
-          type="password"
-          id="password"
-          name="password"
-          value={formData.password}
-          onChange={(e) => setFormData({...formData, password: e.target.value})}
-          className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-          autoComplete="current-password"
-          disabled={loading}
-        />
+  type="password"
+  id="password"
+  name="password"
+  value={formData.password}
+  onChange={(e) => setFormData({...formData, password: e.target.value})}
+  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+  autoComplete="new-password"  // Override browser autofill
+/>
       </div>
 
-      {/* Submit button */}
       <button
         type="submit"
         disabled={loading}
