@@ -3,14 +3,15 @@ import axios from 'axios';
 
 // Async Thunks
 export const getall = createAsyncThunk(
-  'ProductOfferingCatalog/getall',
-  async (_, { rejectWithValue }) => {
-    try {      
+  'productOfferingCatalog/getall',
+  async ({ page = 1, limit = 6 }, { rejectWithValue }) => {
+    try {
       const access_token = localStorage.getItem('access_token');
       const response = await axios.get("/api/product-offering-catalog", {
         headers: { authorization: access_token },
+        params: { page, limit }
       });
-      return response.data || [];
+      return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
     }
@@ -18,9 +19,9 @@ export const getall = createAsyncThunk(
 );
 
 export const getOne = createAsyncThunk(
-  'ProductOfferingCatalog/getOne',
+  'productOfferingCatalog/getOne',
   async (id, { rejectWithValue }) => {
-    try {      
+    try {
       const access_token = localStorage.getItem('access_token');
       const response = await axios.get(`/api/product-offering-catalog/${id}`, {
         headers: { authorization: access_token },
@@ -33,7 +34,7 @@ export const getOne = createAsyncThunk(
 );
 
 export const createCatalog = createAsyncThunk(
-  'ProductOfferingCatalog/create',
+  'productOfferingCatalog/create',
   async (productData, { rejectWithValue }) => {
     try {
       const access_token = localStorage.getItem('access_token');
@@ -48,10 +49,10 @@ export const createCatalog = createAsyncThunk(
 );
 
 export const updateCatalogStatus = createAsyncThunk(
-  'ProductOfferingCatalog/updateStatus', // Fixed action type prefix
+  'productOfferingCatalog/updateStatus',
   async ({ id, currentStatus }, { rejectWithValue }) => {
     try {
-      const access_token = localStorage.getItem('access_token'); // Added access_token
+      const access_token = localStorage.getItem('access_token');
       const newStatus = currentStatus === 'draft' ? 'published' 
                       : currentStatus === 'published' ? 'retired'
                       : currentStatus;
@@ -59,18 +60,17 @@ export const updateCatalogStatus = createAsyncThunk(
       const response = await axios.patch(
         `/api/product-offering-catalog/${id}`, 
         { status: newStatus },
-        { headers: { authorization: access_token } } // Added headers
+        { headers: { authorization: access_token } }
       );
-      
-      return response.data.result; // Fixed response data structure
+      return response.data.result;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || err.message); // Consistent error handling
+      return rejectWithValue(err.response?.data?.message || err.message);
     }
   }
 );
 
 export const updateCatalog = createAsyncThunk(
-  'ProductOfferingCatalog/update',
+  'productOfferingCatalog/update',
   async ({ id, ...productData }, { rejectWithValue }) => {
     try {
       const access_token = localStorage.getItem('access_token');
@@ -85,7 +85,7 @@ export const updateCatalog = createAsyncThunk(
 );
 
 export const deleteCatalog = createAsyncThunk(
-  'ProductOfferingCatalog/delete',
+  'productOfferingCatalog/delete',
   async (id, { rejectWithValue }) => {
     try {
       const access_token = localStorage.getItem('access_token');
@@ -100,31 +100,40 @@ export const deleteCatalog = createAsyncThunk(
 );
 
 // Slice
-const ProductOfferingCatalogSlice = createSlice({
-  name: 'ProductOfferingCatalog',
+const productOfferingCatalogSlice = createSlice({
+  name: 'productOfferingCatalog',
   initialState: { 
     data: [],
     selectedProduct: null,
+    currentPage: 1,
+    totalPages: 1,
+    totalItems: 0,
+    limit: 6,
     loading: true,
     error: null
   },
+  reducers: {},
   extraReducers: (builder) => {
     builder
-      // getall
+      // Get All
       .addCase(getall.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(getall.fulfilled, (state, action) => {
-        state.data = action.payload;
+        state.data = action.payload.data;
+        state.currentPage = action.payload.page;
+        state.totalPages = action.payload.totalPages;
+        state.totalItems = action.payload.total;
+        state.limit = action.meta.arg?.limit || 6;
         state.loading = false;
       })
       .addCase(getall.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })
-      
-      // getOne
+
+      // Get One
       .addCase(getOne.pending, (state) => {
         state.loading = true;
         state.error = null;
@@ -137,28 +146,29 @@ const ProductOfferingCatalogSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      
-      // createCatalog
+
+      // Create
       .addCase(createCatalog.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(createCatalog.fulfilled, (state, action) => {
-        state.data.push(action.payload);
+        state.data.unshift(action.payload);
+        state.totalItems += 1;
         state.loading = false;
       })
       .addCase(createCatalog.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       })
-      
-      // updateCatalogStatus
+
+      // Update Status
       .addCase(updateCatalogStatus.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(updateCatalogStatus.fulfilled, (state, action) => {
-        const index = state.data.findIndex(p => p.id === action.payload.id);
+        const index = state.data.findIndex(p => p.sys_id === action.payload.sys_id);
         if (index !== -1) {
           state.data[index] = action.payload;
         }
@@ -168,14 +178,14 @@ const ProductOfferingCatalogSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      
-      // updateCatalog
+
+      // Update
       .addCase(updateCatalog.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(updateCatalog.fulfilled, (state, action) => {
-        const index = state.data.findIndex(p => p.id === action.payload.id);
+        const index = state.data.findIndex(p => p.sys_id === action.payload.sys_id);
         if (index !== -1) {
           state.data[index] = action.payload;
         }
@@ -185,21 +195,22 @@ const ProductOfferingCatalogSlice = createSlice({
         state.error = action.payload;
         state.loading = false;
       })
-      
-      // deleteCatalog
+
+      // Delete
       .addCase(deleteCatalog.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
       .addCase(deleteCatalog.fulfilled, (state, action) => {
-        state.data = state.data.filter(p => p.id !== action.payload);
+        state.data = state.data.filter(p => p.sys_id !== action.payload);
+        state.totalItems -= 1;
         state.loading = false;
       })
       .addCase(deleteCatalog.rejected, (state, action) => {
         state.error = action.payload;
         state.loading = false;
       });
-  },
+  }
 });
 
-export default ProductOfferingCatalogSlice.reducer;
+export default productOfferingCatalogSlice.reducer;
