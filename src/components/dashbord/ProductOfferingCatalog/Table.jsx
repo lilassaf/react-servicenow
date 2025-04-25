@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { Popconfirm, Empty } from 'antd';
+import { Popconfirm, Empty, Spin  } from 'antd';
 import { getall, deleteCatalog } from '../../../features/servicenow/product-offering/productOfferingCatalogSlice';
 
-function Table({setData , setOpen, dispatch}) {
-    
+function Table({ setData, setOpen, dispatch }) {
     const { data: products, loading, error } = useSelector((state) => state.productOfferingCatalog);
 
     useEffect(() => {
@@ -17,11 +16,11 @@ function Table({setData , setOpen, dispatch}) {
     };
 
     function changeData(newData) {
-        setData(newData)
-        setOpen(true)
-      }
+        setData(newData);
+        setOpen(true);
+    }
 
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div className='h-full flex justify-center items-center'> <Spin /> </div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
@@ -39,42 +38,45 @@ function Table({setData , setOpen, dispatch}) {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                    {products?.map((product) => (
-                        <tr key={product.number} className="*:text-gray-900 *:first:font-medium">
-                            <td className="px-3 py-3 whitespace-nowrap">{product.number}</td>
-                            <td className="px-3 py-3 whitespace-nowrap">{product.name}</td>
-                            <td className="px-3 py-3 whitespace-nowrap">
-                                <span className={`px-2 py-1 text-xs capitalize rounded ${product.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
-                                    {product.status}
-                                </span>
-                            </td>
-                            <td className="px-3 py-3 whitespace-nowrap">{product.start_date || 'N/A'}</td>
-                            <td className="px-3 py-3 whitespace-nowrap">{product.end_date || 'N/A'}</td>
-                            <td className="px-3 py-3 whitespace-nowrap">
-                                <button
-                                    className="mr-2 text-gray-500 hover:text-blue-600 "
-                                    onClick={() => changeData(product)}
-                                >
-                                    <i className="ri-pencil-line text-2xl"></i>
-                                </button>
-
-
-                                <Popconfirm
-                                    title="Delete the catalog"
-                                    description="Are you sure to delete this catalog?"
-                                    icon={<i className="ri-error-warning-line text-red-600 mr-2"></i>}
-                                    onConfirm={() => handleDelete(product.sys_id)}
-                                >
-                                    <button
-                                        className="text-gray-500 hover:text-red-600 "
-                                    >
-                                        <i className="ri-delete-bin-6-line text-2xl"></i>
-                                    </button>
-                                </Popconfirm>
-
+                    {!products || products.length === 0 ? (
+                        <tr>
+                            <td colSpan="6" className="py-4 text-center">
+                                <Empty description="No catalogs found" />
                             </td>
                         </tr>
-                    ))}
+                    ) : (
+                        products.map((product) => (
+                            <tr key={product.number} className="*:text-gray-900 *:first:font-medium">
+                                <td className="px-3 py-3 whitespace-nowrap">{product.number}</td>
+                                <td className="px-3 py-3 whitespace-nowrap">{product.name}</td>
+                                <td className="px-3 py-3 whitespace-nowrap">
+                                    <span className={`px-2 py-1 text-xs capitalize rounded ${product.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                        {product.status}
+                                    </span>
+                                </td>
+                                <td className="px-3 py-3 whitespace-nowrap">{product.start_date || 'N/A'}</td>
+                                <td className="px-3 py-3 whitespace-nowrap">{product.end_date || 'N/A'}</td>
+                                <td className="px-3 py-3 whitespace-nowrap">
+                                    <button
+                                        className="mr-2 text-gray-500 hover:text-blue-600 "
+                                        onClick={() => changeData(product)}
+                                    >
+                                        <i className="ri-pencil-line text-2xl"></i>
+                                    </button>
+                                    <Popconfirm
+                                        title="Delete the catalog"
+                                        description="Are you sure to delete this catalog?"
+                                        icon={<i className="ri-error-warning-line text-red-600 mr-2"></i>}
+                                        onConfirm={() => handleDelete(product.sys_id)}
+                                    >
+                                        <button className="text-gray-500 hover:text-red-600 ">
+                                            <i className="ri-delete-bin-6-line text-2xl"></i>
+                                        </button>
+                                    </Popconfirm>
+                                </td>
+                            </tr>
+                        ))
+                    )}
                 </tbody>
             </table>
         </div>
