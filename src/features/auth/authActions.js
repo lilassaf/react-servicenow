@@ -7,61 +7,70 @@ export const userLogin = createAsyncThunk(
   'auth/login',
   async ({ username, password }, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
       const { data } = await axios.post(
-        `/api/get-token`,
+        '/api/get-token',
         { username, password },
-        config
+        {
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 8000
+        }
       );
-
-      //localStorage.setItem('access_token', `Bearer ${data.access_token}`);
       return data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
+      if (!error.response) {
+        return rejectWithValue({
+          type: 'network_error',
+          message: 'Network error. Please check your connection.'
+        });
       }
-      return rejectWithValue(error.message);
+      return rejectWithValue({
+        type: error.response.data?.error || 'authentication_error',
+        message: error.response.data?.message || 'Login failed'
+      });
     }
   }
 );
 
 export const registerUser = createAsyncThunk(
   'auth/register',
-  async ({ 
-    user_name, 
-    user_password, 
-    first_name, 
-    last_name, 
-    email, 
-    mobile_phone 
-  }, { rejectWithValue }) => {
+  async ({ user_name, user_password, first_name, last_name, email, mobile_phone }, { rejectWithValue }) => {
     try {
-      const config = {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      };
-
       const { data } = await axios.post(
-        `/api/create-user`,
-        { user_name, user_password, first_name, last_name, email, mobile_phone },
-        config
+        `/api/request-registration`,
+        { 
+          user_name, 
+          user_password, 
+          first_name, 
+          last_name, 
+          email, 
+          mobile_phone 
+        },
+        { 
+          headers: { 'Content-Type': 'application/json' },
+          timeout: 10000
+        }
       );
 
       return data;
     } catch (error) {
-      if (error.response && error.response.data.message) {
-        return rejectWithValue(error.response.data.message);
+      let errorMessage = 'Registration failed';
+      
+      if (error.response) {
+        if (error.response.data?.error?.includes('already exists')) {
+          errorMessage = 'Username or email already exists';
+        } else {
+          errorMessage = error.response.data?.message || errorMessage;
+        }
+      } else if (error.message.includes('timeout')) {
+        errorMessage = 'Request timeout. Please try again.';
       }
-      return rejectWithValue(error.message);
+      
+      return rejectWithValue(errorMessage);
     }
   }
 );
+
+
 
 export const userLogout = createAsyncThunk(
   'auth/logout',

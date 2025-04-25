@@ -1,95 +1,155 @@
-// LoginForm.js
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { userLogin } from '../../features/auth/authActions';
-import { useNavigate } from 'react-router-dom';
+
+const MESSAGE_MAPPINGS = {
+  // Error messages
+  invalid_token: 'Invalid confirmation link',
+  expired_token: 'Confirmation link has expired',
+  user_exists: 'User already exists',
+  creation_failed: 'Account creation failed',
+  timeout: 'Request timeout',
+  service_now_auth_failed: 'Service configuration error',
+  validation_error: 'Please fill in all fields',
+  invalid_credentials: 'Invalid username or password',
+  network_error: 'Network error. Please check your connection.',
+  authentication_failed: 'Authentication failed',
+  default_error: 'An unexpected error occurred',
+  
+  // Success messages
+  registration_confirmed: 'Registration confirmed! You can now log in.',
+  default_success: 'Action completed successfully'
+};
 
 function LoginForm() {
-  const [formData, setFormData] = useState({
+  // Initialize with empty strings - no default credentials
+  const [formData, setFormData] = useState({ 
     username: '',
-    password: ''
+    password: '' 
   });
   
-  const { loading, error } = useSelector((state) => state.auth);
+  const [message, setMessage] = useState({ text: '', type: '' });
+  const { loading } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
 
+  // Handle URL query parameters
   useEffect(() => {
-    setFormData({
-      username: '',
-      password: ''
-    });
-  }, []);
+    const query = new URLSearchParams(location.search);
+    const error = query.get('error');
+    const success = query.get('success');
 
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value
-    });
-  };
+    if (success) {
+      setMessage({
+        text: MESSAGE_MAPPINGS[success] || MESSAGE_MAPPINGS.default_success,
+        type: 'success'
+      });
+      navigate(location.pathname, { replace: true });
+    }
+
+    if (error) {
+      setMessage({
+        text: MESSAGE_MAPPINGS[error] || MESSAGE_MAPPINGS.default_error,
+        type: 'error'
+      });
+      navigate(location.pathname, { replace: true });
+    }
+  }, [location, navigate]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setMessage({ text: '', type: '' });
+
+    if (!formData.username.trim() || !formData.password.trim()) {
+      setMessage({
+        text: MESSAGE_MAPPINGS.validation_error,
+        type: 'error'
+      });
+      return;
+    }
+
     try {
-      const response = await dispatch(userLogin(formData));
-      if (response?.payload?.id_token) {
-        localStorage.setItem('access_token', `Bearer ${response.payload.id_token}`);
-        navigate('/dashboard');
+      const result = await dispatch(userLogin(formData));
+      
+      if (userLogin.fulfilled.match(result)) {
+        if (result.payload?.id_token) {
+          localStorage.setItem('access_token', `Bearer ${result.payload.id_token}`);
+          navigate('/dashboard');
+        } else {
+          setMessage({
+            text: 'Login successful but no token received',
+            type: 'error'
+          });
+        }
       }
-    } catch (err) {
-      console.error('Login error:', err.message);
+    } catch (error) {
+      const errorMessage = typeof error === 'string' 
+        ? error 
+        : error.message || MESSAGE_MAPPINGS.default_error;
+      
+      setMessage({
+        text: errorMessage,
+        type: 'error'
+      });
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} autoComplete="off" className="w-full">
-      <div className="w-full flex flex-col gap-2 mb-4">
-        {/* <label className="font-semibold text-xs text-gray-400">Username</label> */}
-        <input
-          type="text"
-          name="username"
-          value={formData.username}
-          onChange={handleChange}
-          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none ${
-            error ? 'border-red-500' : 'focus:border-blue-500'
-          }`}
-          placeholder="Username"
-          autoComplete="new-username"
-          disabled={loading}
-        />
-      </div>
 
-      <div className="w-full flex flex-col gap-2 mb-5">
-        {/* <label className="font-semibold text-xs text-gray-400 dark:text-gray-300">Password</label> */}
-        <input
-          type="password"
-          name="password"
-          value={formData.password}
-          onChange={handleChange}
-          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none ${
-            error ? 'border-red-500' : 'focus:border-blue-500'
-          }`}
-          placeholder="Password"
-          autoComplete="new-password"
-          disabled={loading}
-        />
-      </div>
-
-      {error && (
-        <div className="mb-4 text-red-500 text-sm">
-          Login failed. Please check your username and password.
+    <form onSubmit={handleSubmit} className="max-w-md mx-auto">
+      {/* Message display */}
+      {message.text && (
+        <div className={`mb-4 p-3 rounded-md ${
+          message.type === 'error' 
+            ? 'bg-red-50 text-red-600 border border-red-200'
+            : 'bg-green-50 text-green-600 border border-green-200'
+        }`}>
+          {message.text}
         </div>
       )}
 
-      <div className="mt-5">
-        <button
-          type="submit"
-          disabled={loading}
-          className="py-1 px-8 bg-blue-500 hover:bg-blue-800 focus:ring-offset-blue-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg cursor-pointer select-none disabled:bg-blue-400 disabled:cursor-not-allowed"
-        >
-          {loading ? 'Logging in...' : 'Login'}
-        </button>
+      {/* Username field - completely empty */}
+      <div className="mb-4">
+        <label htmlFor="username" className="block text-gray-600 mb-1">
+          Username
+        </label>
+        <input
+  type="text"
+  id="username"
+  name="username"
+  value={formData.username}
+  onChange={(e) => setFormData({...formData, username: e.target.value})}
+  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+  autoComplete="new-username"  // Override browser autofill
+/>
       </div>
+
+      {/* Password field - completely empty */}
+      <div className="mb-6">
+        <label htmlFor="password" className="block text-gray-600 mb-1">
+          Password
+        </label>
+        <input
+  type="password"
+  id="password"
+  name="password"
+  value={formData.password}
+  onChange={(e) => setFormData({...formData, password: e.target.value})}
+  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+  autoComplete="new-password"  // Override browser autofill
+/>
+
+      </div>
+
+      <button
+        type="submit"
+        disabled={loading}
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md disabled:bg-blue-300 disabled:cursor-not-allowed"
+      >
+        {loading ? 'Signing in...' : 'Sign in'}
+      </button>
     </form>
   );
 }

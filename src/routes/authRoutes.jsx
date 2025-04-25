@@ -8,9 +8,7 @@ import PrivateRoute from '../middleware/PrivateRoute';
 const authRoutes = [
   { path: '/', element: <Login /> },
   { path: '/register', element:
-    <PrivateRoute>
     <Register /> 
-    </PrivateRoute> 
     },
   // ... other routes
 ];
