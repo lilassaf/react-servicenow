@@ -44,13 +44,13 @@ function LoginForm() {
   return (
     <form onSubmit={handleSubmit} autoComplete="off" className="w-full">
       <div className="w-full flex flex-col gap-2 mb-4">
-        <label className="font-semibold text-xs text-gray-400 dark:text-gray-300">Username</label>
+        {/* <label className="font-semibold text-xs text-gray-400">Username</label> */}
         <input
           type="text"
           name="username"
           value={formData.username}
           onChange={handleChange}
-          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900 ${
+          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none ${
             error ? 'border-red-500' : 'focus:border-blue-500'
           }`}
           placeholder="Username"
@@ -60,16 +60,16 @@ function LoginForm() {
       </div>
 
       <div className="w-full flex flex-col gap-2 mb-5">
-        <label className="font-semibold text-xs text-gray-400 dark:text-gray-300">Password</label>
+        {/* <label className="font-semibold text-xs text-gray-400 dark:text-gray-300">Password</label> */}
         <input
           type="password"
           name="password"
           value={formData.password}
           onChange={handleChange}
-          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none dark:border-gray-500 dark:bg-gray-900 ${
+          className={`border rounded-lg px-3 py-2 text-sm w-full outline-none ${
             error ? 'border-red-500' : 'focus:border-blue-500'
           }`}
-          placeholder="••••••••"
+          placeholder="Password"
           autoComplete="new-password"
           disabled={loading}
         />
