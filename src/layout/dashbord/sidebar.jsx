@@ -33,12 +33,31 @@ const Sidebar = () => {
             {[
               { path: '/dashboard', icon: 'dashboard', text: 'Dashboard' },
 
-              { path: '/product-offering', icon: 'dashboard', text: 'Product Offering' },
+              { path: '/dashboard/product-offering', icon: 'dashboard', text: 'Product Offering', 
+                children:[
+                  {path: '/dashboard/catalog', icon: 'dashboard', text: 'Catalogs'},
+                  {path: '/dashboard/category', icon: 'dashboard', text: 'Categories'},
+                  {path: '/dashboard/product-offering', icon: 'dashboard', text: 'Product Offering'}
+                ] },
 
             ].map((item) => {
               const isActive = location.pathname.toLowerCase() === item.path.toLowerCase();
               return (
                 <li key={item.path}>
+                  {item.children ? 
+                  // <ul className="space-y-4">
+                  //   {item.children.map((child)=>{
+                  //     <Link
+                  //     to={child.path}
+                  //     className={`flex items-center p-2 rounded-lg hover:bg-cyan-100 hover:text-cyan-600 ${
+                  //       isActive ? 'bg-cyan-600 text-cyan-50' : 'text-gray-600 hover:bg-gray-50' 
+                  //     }`}
+                  //   >
+                  //     <i className={`ri-${child.icon}-line mr-3 text-lg`} />
+                  //     <span className="font-medium">{child.text}</span>
+                  //   </Link> 
+                  //   })}
+                  // </ul> 
                   <Link
                     to={item.path}
                     className={`flex items-center p-2 rounded-lg hover:bg-cyan-100 hover:text-cyan-600 ${
@@ -48,6 +67,16 @@ const Sidebar = () => {
                     <i className={`ri-${item.icon}-line mr-3 text-lg`} />
                     <span className="font-medium">{item.text}</span>
                   </Link>
+                  : <Link
+                    to={item.path}
+                    className={`flex items-center p-2 rounded-lg hover:bg-cyan-100 hover:text-cyan-600 ${
+                      isActive ? 'bg-cyan-600 text-cyan-50' : 'text-gray-600 hover:bg-gray-50' 
+                    }`}
+                  >
+                    <i className={`ri-${item.icon}-line mr-3 text-lg`} />
+                    <span className="font-medium">{item.text}</span>
+                  </Link> }
+                  
                 </li>
               );
             })}

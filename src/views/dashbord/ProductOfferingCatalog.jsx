@@ -30,7 +30,7 @@ function ProductOfferingCatalog() {
             </div>
             <button
               className="overflow-hidden relative w-36 h-10 cursor-pointer flex items-center border border-cyan-700 bg-cyan-700 group hover:bg-cyan-700 active:bg-cyan-700 active:border-cyan-700"
-               onClick={() => setOpen(true)}
+               onClick={() => {setOpen(true);setData(null)}}
             >
               <span
                 className="text-gray-200 font-semibold ml-12 transform group-hover:translate-x-20 transition-all duration-300"

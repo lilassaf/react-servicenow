@@ -11,10 +11,10 @@ function Table({setData , setOpen}) {
         dispatch(getall());
     }, [dispatch]);
 
-    const handleDelete = (productId) => {
-        if (window.confirm('Are you sure you want to delete this product?')) {
-            dispatch(deleteProductOffering(productId));
-        }
+    const handleDelete = async (productId) => {
+        
+        await dispatch(deleteProductOffering(productId));
+        await dispatch(getall());
     };
 
     function changeData(newData) {
@@ -24,7 +24,7 @@ function Table({setData , setOpen}) {
 
     if (loading) return <div>Loading...</div>;
     if (error) return <div>Error: {error}</div>;
-    console.log(products)
+    
     return (
         <div className="overflow-x-auto rounded border border-gray-300 w-9/12 shadow-2xl">
             <table className="min-w-full divide-y-2 divide-gray-200">

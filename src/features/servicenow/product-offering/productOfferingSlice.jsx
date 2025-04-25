@@ -11,7 +11,6 @@ export const getall = createAsyncThunk(
         headers: { authorization: access_token },
       });
       
-      console.log(response);
       return response.data || [];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);
