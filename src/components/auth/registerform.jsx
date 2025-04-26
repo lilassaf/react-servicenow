@@ -1,8 +1,7 @@
-// components/RegisterForm.js
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
 import { registerUser } from "../../features/auth/authActions";
+import { useNavigate } from 'react-router-dom';
 
 const RegisterForm = () => {
   const dispatch = useDispatch();
@@ -61,6 +60,8 @@ const RegisterForm = () => {
       
       if (registerUser.fulfilled.match(result)) {
         setSuccessMessage('A confirmation email has been sent. Please check your inbox to complete registration.');
+        
+        // Reset form after successful registration
         setFormData({
           user_name: '',
           user_password: '',
@@ -70,8 +71,10 @@ const RegisterForm = () => {
           mobile_phone: ''
         });
         
-        // Redirect to login after 5 seconds
-        setTimeout(() => navigate('/login'), 5000);
+        // Navigate to login page and show success message
+        setTimeout(() => {
+          navigate('/login', { state: { successMessage: 'Registration successful! Please confirm your email.' } });
+        }, 2000); // Wait 2 seconds before redirecting
       }
     } catch (err) {
       console.error('Registration error:', err);
@@ -217,7 +220,7 @@ const RegisterForm = () => {
       
       <div className="mt-4 text-center text-sm text-gray-600">
         Already have an account?{' '}
-        <a href="/login" className="text-blue-600 hover:underline">Login here</a>
+        <a href="/login" className="text-blue-600 hover:underline">Login here</a>.
       </div>
     </form>
   );

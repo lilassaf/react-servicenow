@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { userLogin } from '../../features/auth/authActions';
+import { message } from 'antd';
 
 const MESSAGE_MAPPINGS = {
   // Error messages
@@ -29,126 +30,100 @@ function LoginForm() {
     password: '' 
   });
   
-  const [message, setMessage] = useState({ text: '', type: '' });
-  const { loading } = useSelector((state) => state.auth);
+  const [messageContent, setMessageContent] = useState({ text: '', type: '' });
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const location = useLocation();
 
-  // Handle URL query parameters
-  useEffect(() => {
-    const query = new URLSearchParams(location.search);
-    const error = query.get('error');
-    const success = query.get('success');
-
-    if (success) {
-      setMessage({
-        text: MESSAGE_MAPPINGS[success] || MESSAGE_MAPPINGS.default_success,
-        type: 'success'
-      });
-      navigate(location.pathname, { replace: true });
-    }
-
-    if (error) {
-      setMessage({
-        text: MESSAGE_MAPPINGS[error] || MESSAGE_MAPPINGS.default_error,
-        type: 'error'
-      });
-      navigate(location.pathname, { replace: true });
-    }
-  }, [location, navigate]);
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage({ text: '', type: '' });
+    setMessageContent({ text: '', type: '' });
 
+    // Validate form data
     if (!formData.username.trim() || !formData.password.trim()) {
-      setMessage({
+      setMessageContent({
         text: MESSAGE_MAPPINGS.validation_error,
         type: 'error'
       });
       return;
     }
 
-    try {
-      const result = await dispatch(userLogin(formData));
-      
-      if (userLogin.fulfilled.match(result)) {
-        if (result.payload?.id_token) {
-          localStorage.setItem('access_token', `Bearer ${result.payload.id_token}`);
-          navigate('/dashboard');
-        } else {
-          setMessage({
-            text: 'Login successful but no token received',
-            type: 'error'
-          });
-        }
+    // Dispatch the login action
+    const result = await dispatch(userLogin(formData));
+
+    if (userLogin.fulfilled.match(result)) {
+      const token = result.payload?.id_token;
+      if (token) {
+        localStorage.setItem('access_token', `Bearer ${token}`);
+        message.success('Login successful');
+        navigate('/dashboard');
+      } else {
+        message.error('Login successful but no token received');
       }
-    } catch (error) {
-      const errorMessage = typeof error === 'string' 
-        ? error 
-        : error.message || MESSAGE_MAPPINGS.default_error;
-      
-      setMessage({
-        text: errorMessage,
-        type: 'error'
-      });
+    } else if (userLogin.rejected.match(result)) {
+      const { message: errorMsg, type } = result.payload || {};
+      message.error(MESSAGE_MAPPINGS[type] || errorMsg || MESSAGE_MAPPINGS.default_error);
     }
   };
 
-  return (
+  // Check if user is already logged in on component mount
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) navigate('/dashboard');
+  }, [navigate]);
 
+  return (
     <form onSubmit={handleSubmit} className="max-w-md mx-auto">
       {/* Message display */}
-      {message.text && (
+      {messageContent.text && (
         <div className={`mb-4 p-3 rounded-md ${
-          message.type === 'error' 
+          messageContent.type === 'error' 
             ? 'bg-red-50 text-red-600 border border-red-200'
             : 'bg-green-50 text-green-600 border border-green-200'
         }`}>
-          {message.text}
+          {messageContent.text}
         </div>
       )}
 
-      {/* Username field - completely empty */}
+      {/* Username field */}
       <div className="mb-4">
         <label htmlFor="username" className="block text-gray-600 mb-1">
           Username
         </label>
         <input
-  type="text"
-  id="username"
-  name="username"
-  value={formData.username}
-  onChange={(e) => setFormData({...formData, username: e.target.value})}
-  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-  autoComplete="new-username"  // Override browser autofill
-/>
+          type="text"
+          id="username"
+          name="username"
+          value={formData.username}
+          onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+          className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+          autoComplete="new-username"
+        />
       </div>
 
-      {/* Password field - completely empty */}
+      {/* Password field */}
       <div className="mb-6">
         <label htmlFor="password" className="block text-gray-600 mb-1">
           Password
         </label>
         <input
-  type="password"
-  id="password"
-  name="password"
-  value={formData.password}
-  onChange={(e) => setFormData({...formData, password: e.target.value})}
-  className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
-  autoComplete="new-password"  // Override browser autofill
-/>
-
+          type="password"
+          id="password"
+          name="password"
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="w-full border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:border-blue-500"
+          autoComplete="new-password"
+        />
       </div>
 
+      {/* Submit button */}
       <button
         type="submit"
-        disabled={loading}
-        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md disabled:bg-blue-300 disabled:cursor-not-allowed"
+        disabled={false}  // Add loading state if needed
+        className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md"
       >
-        {loading ? 'Signing in...' : 'Sign in'}
+        Sign in
       </button>
     </form>
   );
