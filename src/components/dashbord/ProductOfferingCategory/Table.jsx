@@ -71,8 +71,8 @@ function Table({setData , setOpen}) {
                                     {product.status}
                                 </span>
                             </td>
-                            <td className="px-3 py-3 whitespace-nowrap">{product.start_date || 'N/A'}</td>
-                            <td className="px-3 py-3 whitespace-nowrap">{product.end_date || 'N/A'}</td>
+                            <td className="px-3 py-3 whitespace-nowrap">{product.start_date ? new Date(product.start_date).toISOString().split("T")[0] : 'N/A'}</td>
+                            <td className="px-3 py-3 whitespace-nowrap">{product.end_date ? new Date(product.end_date).toISOString().split("T")[0] : 'N/A'}</td>
                             <td className="px-3 py-3 whitespace-nowrap">
                                 <button
                                     className="mr-2 text-gray-500 hover:text-blue-600 "
