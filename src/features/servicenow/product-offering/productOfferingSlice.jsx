@@ -9,8 +9,7 @@ export const getall = createAsyncThunk(
       const access_token = localStorage.getItem('access_token');
       const response = await axios.get("/api/product-offering", {
         headers: { authorization: access_token },
-      });
-      
+      }); 
       return response.data || [];
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || error.message);

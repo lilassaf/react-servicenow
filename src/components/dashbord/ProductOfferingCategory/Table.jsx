@@ -1,32 +1,54 @@
 import React, { useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Popconfirm } from 'antd';
+import { Popconfirm, Empty, Spin, Pagination } from 'antd';
 import { getall, deleteCategory } from '../../../features/servicenow/product-offering/productOfferingCategorySlice';
 
 function Table({setData , setOpen}) {
-    const dispatch = useDispatch();
-    const { data: products, loading, error } = useSelector((state) => state.productOfferingCategory);
+     const dispatch = useDispatch();
+        const {
+            data: products,
+            loading,
+            error,
+            currentPage,
+            totalItems,
+            limit
+        } = useSelector((state) => state.productOfferingCategory);
+    
 
-    useEffect(() => {
-        dispatch(getall());
-    }, [dispatch]);
+     useEffect(() => {
+          dispatch(getall({ page: 1, limit: 6 }));
+          console.log(products);
+          
+      }, [dispatch]);
+  
+      const handleDelete = async (productId) => {
+          await dispatch(deleteCategory(productId));
+          // Refresh current page after deletion
+          dispatch(getall({ page: currentPage, limit }));
+      };
+      console.log({
+          loading,
+          error,
+          currentPage,
+          totalItems,
+          limit
+      });
+  
+      const handlePageChange = (page) => {
+          dispatch(getall({ page, limit }));
+      };
+  
+      const changeData = (newData) => {
+          setData(newData);
+          setOpen(true);
+      };
 
-    const handleDelete = async (productId) => {
-            await dispatch(deleteCategory(productId));
-            await dispatch(getall());
-    };
-
-    function changeData(newData) {
-        setData(newData)
-        setOpen(true)
-      }
-
-    if (loading) return <div>Loading...</div>;
+    if (loading) return <div><Spin/></div>;
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="overflow-x-auto rounded border border-gray-300 w-9/12 shadow-2xl">
-            <table className="min-w-full divide-y-2 divide-gray-200">
+        <div className="w-9/12 ">
+            <table className="divide-y-2 min-w-full divide-gray-200 overflow-x-auto border border-gray-300  shadow-2xl">
                 <thead className="ltr:text-left rtl:text-right bg-cyan-700 text-white">
                     <tr className="*:font-medium ">
                         <th className="px-3 py-3 whitespace-nowrap">Number</th>
@@ -39,7 +61,8 @@ function Table({setData , setOpen}) {
                 </thead>
 
                 <tbody className="divide-y divide-gray-200">
-                    {products?.map((product) => (
+                {products?.length > 0 ? (
+                    products?.map((product) => (
                         <tr key={product.number} className="*:text-gray-900 *:first:font-medium">
                             <td className="px-3 py-3 whitespace-nowrap">{product.number}</td>
                             <td className="px-3 py-3 whitespace-nowrap">{product.name}</td>
@@ -74,9 +97,30 @@ function Table({setData , setOpen}) {
 
                             </td>
                         </tr>
-                    ))}
+                    ))
+                ): (
+                    <tr>
+                        <td colSpan="6" className="py-8 text-center">
+                            <Empty
+                                image={Empty.PRESENTED_IMAGE_SIMPLE}
+                                description="No categories found"
+                            />
+                        </td>
+                    </tr>
+                )}
                 </tbody>
             </table>
+            <div className=" mt-5 flex justify-end ">
+                    <Pagination
+                        current={currentPage}
+                        total={totalItems}
+                        pageSize={limit}
+                        onChange={handlePageChange}
+                        showSizeChanger={false}
+                        disabled={loading}
+                        className="ant-pagination-custom"
+                    />
+                </div>
         </div>
     );
 }
