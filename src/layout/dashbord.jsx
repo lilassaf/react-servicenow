@@ -8,7 +8,7 @@ function Dashboard() {
             <Sidebar />
             <div className="dashboard-content w-full">
                 <Header />
-                <div   className="bg-gray-100/50 h-full">
+                <div   className="bg-gray-100/50">
                     <Outlet />
                 </div>
 

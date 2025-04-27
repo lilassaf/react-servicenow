@@ -74,7 +74,7 @@ function Table({ setData, setOpen }) {
                                     <td className="px-3 py-3 whitespace-nowrap">{product.number}</td>
                                     <td className="px-3 py-3 whitespace-nowrap">{product.name}</td>
                                     <td className="px-3 py-3 whitespace-nowrap">
-                                        <span className={`px-2 py-1 text-xs capitalize rounded ${product.status === 'published' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'}`}>
+                                        <span className={`px-2 py-1 text-md capitalize rounded ${product.status === 'published' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}`}>
                                             {product.status}
                                         </span>
                                     </td>

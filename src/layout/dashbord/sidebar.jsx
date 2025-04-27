@@ -40,7 +40,7 @@ const Sidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="h-[calc(100vh-180px)] overflow-y-auto">
+        <nav className="h-[calc(100vh-180px)] overflow-y-auto ">
           <ul className="space-y-2">
             {[
               { path: '/dashboard', icon: 'dashboard', text: 'Dashboard' },
@@ -61,7 +61,7 @@ const Sidebar = () => {
 
               return (
                 <li key={item.path}>
-                  <div className="flex flex-col">
+                  <div className="flex flex-col overflow-hidden">
                     <Link
                       to={item.path}
                       onClick={(e) => {
@@ -70,7 +70,7 @@ const Sidebar = () => {
                           toggleExpand(item.path);
                         }
                       }}
-                      className={`flex items-center p-2 rounded-lg hover:bg-cyan-100 hover:text-cyan-600 ${
+                      className={`flex items-center px-2 py-3  hover:bg-cyan-100 hover:text-cyan-600 ${
                         isItemActive ? 'bg-cyan-600 text-cyan-50' : 'text-gray-600 hover:bg-gray-50'
                       }`}
                     >
@@ -84,12 +84,12 @@ const Sidebar = () => {
                     </Link>
 
                     {hasChildren && isExpanded && (
-                      <ul className="mt-1 space-y-1 translate-1">
+                      <ul className="mt-1 space-y-1 translate-1 max-w-full " >
                         {item.children.map((child) => (
                           <li key={child.path}>
                             <Link
                               to={child.path}
-                              className={`flex items-center p-2 rounded-lg text-sm hover:bg-cyan-100 hover:text-cyan-600 ${
+                              className={`flex items-center px-2 py-3  text-sm hover:bg-cyan-100 hover:text-cyan-600 ${
                                 isActive(child.path) ? 'bg-cyan-600 text-cyan-50' : 'text-gray-600 hover:bg-gray-50'
                               }`}
                             >
@@ -108,12 +108,12 @@ const Sidebar = () => {
         </nav>
 
         {/* Logout */}
-        <div className="absolute bottom-0 left-0 right-0 bg-white">
+        <div className=" group absolute bottom-0 left-0 right-0 border-t-2 border-red-600 py-2 pl-2 bg-red-100 text-red-700 hover:bg-red-600 hover:text-white transition-all duration-150" >
           <button
             onClick={handleLogout}
-            className="w-full flex items-center p-2 text-gray-600 hover:bg-gray-50 hover:text-cyan-600/80"
+            className="w-full flex items-center p-2 "
           >
-            <i className="ri-shut-down-line mr-3 text-lg" />
+            <i className="ri-shut-down-line mr-3 text-lg shake" />
             <span className="font-medium">Logout</span>
           </button>
         </div>

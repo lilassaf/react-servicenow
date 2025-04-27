@@ -1,9 +1,10 @@
 @import "tailwindcss";
 
-/* pagination css */
-.ant-pagination-item, .ant-pagination-item-link{
-     border-radius: 0px !important;
+*{
+    border-radius: 0px !important;
 }
+
+/* pagination css */
 .ant-pagination-item-active {
     border-color: #0891b2 !important; /* Cyan 700 */
 }
@@ -18,4 +19,10 @@
 
 .ant-pagination-item:hover a {
     color: #0891b2 !important;
+}
+
+/* modal */
+.ant-modal-content{
+
+
 }
