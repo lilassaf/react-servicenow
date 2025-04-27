@@ -12,7 +12,8 @@ export const userLogin = createAsyncThunk(
         { username, password },
         {
           headers: { 'Content-Type': 'application/json' },
-          timeout: 8000
+          timeout: 8000,
+          withCredentials: true // send cookies
         }
       );
       return data;
@@ -23,49 +24,29 @@ export const userLogin = createAsyncThunk(
           message: 'Network error. Please check your connection.'
         });
       }
+
       return rejectWithValue({
-        type: error.response.data?.error || 'authentication_error',
-        message: error.response.data?.message || 'Login failed'
+        type: error.response.data?.error || 'authentication_failed',
+        message: error.response.data?.error_description || 'Login failed'
       });
     }
   }
 );
 
 export const registerUser = createAsyncThunk(
-  'auth/register',
-  async ({ user_name, user_password, first_name, last_name, email, mobile_phone }, { rejectWithValue }) => {
+  'auth/registerUser',
+  async (userData, { rejectWithValue }) => {
     try {
-      const { data } = await axios.post(
-        `/api/request-registration`,
-        { 
-          user_name, 
-          user_password, 
-          first_name, 
-          last_name, 
-          email, 
-          mobile_phone 
-        },
-        { 
-          headers: { 'Content-Type': 'application/json' },
-          timeout: 10000
-        }
-      );
-
-      return data;
-    } catch (error) {
-      let errorMessage = 'Registration failed';
-      
-      if (error.response) {
-        if (error.response.data?.error?.includes('already exists')) {
-          errorMessage = 'Username or email already exists';
-        } else {
-          errorMessage = error.response.data?.message || errorMessage;
-        }
-      } else if (error.message.includes('timeout')) {
-        errorMessage = 'Request timeout. Please try again.';
+      const response = await axios.post('/api/request-registration', userData);
+      return response.data;
+    } catch (err) {
+      if (err.response) {
+        // Server returned an error
+        return rejectWithValue(err.response.data.message || 'Registration failed');
+      } else {
+        // Network or other errors
+        return rejectWithValue('An error occurred while registering. Please try again.');
       }
-      
-      return rejectWithValue(errorMessage);
     }
   }
 );
