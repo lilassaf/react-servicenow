@@ -7,36 +7,44 @@ function Table({setData , setOpen}) {
     const dispatch = useDispatch();
     const { data: products, loading, error } = useSelector((state) => state.productOfferingCategory);
 
-    useEffect(() => {
-        dispatch(getall());
-    }, [dispatch]);
-
-    const handleDelete = async (productId) => {
-            await dispatch(deleteCategory(productId));
-            await dispatch(getall());
-    };
-
-    function changeData(newData) {
-        setData(newData)
-        setOpen(true)
-      }
-
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
+     useEffect(() => {
+          dispatch(getall({ page: 1, limit: 6 }));
+          
+      }, [dispatch]);
+  
+      const handleDelete = async (productId) => {
+          await dispatch(deleteCategory(productId));
+          // Refresh current page after deletion
+          dispatch(getall({ page: currentPage, limit }));
+      };
+      
+  
+      const handlePageChange = (page) => {
+          dispatch(getall({ page, limit }));
+      };
+  
+      const changeData = (newData) => {
+          setData(newData);
+          setOpen(true);
+      };
+      
+    if (loading) return <div className='h-full flex justify-center items-center'><Spin /></div>;
+    if (error) return <div className="text-red-500 p-4">Error: {error}</div>;
 
     return (
-        <div className="overflow-x-auto rounded border border-gray-300 w-9/12 shadow-2xl">
-            <table className="min-w-full divide-y-2 divide-gray-200">
-                <thead className="ltr:text-left rtl:text-right bg-cyan-700 text-white">
-                    <tr className="*:font-medium ">
-                        <th className="px-3 py-3 whitespace-nowrap">Number</th>
-                        <th className="px-3 py-3 whitespace-nowrap">Name</th>
-                        <th className="px-3 py-3 whitespace-nowrap">Status</th>
-                        <th className="px-3 py-3 whitespace-nowrap">Start Date</th>
-                        <th className="px-3 py-3 whitespace-nowrap">End Date</th>
-                        <th className="px-3 py-3 whitespace-nowrap">Actions</th>
-                    </tr>
-                </thead>
+        <div className='w-full justify-center flex'>
+        <div className="w-9/12 ">
+        <table className=" divide-y-2 min-w-full divide-gray-200 overflow-x-auto border border-gray-300  shadow-2xl">
+                    <thead className="ltr:text-left rtl:text-right bg-cyan-700 text-white">
+                        <tr className="*:font-medium ">
+                            <th className="px-3 py-3 whitespace-nowrap">Number</th>
+                            <th className="px-3 py-3 whitespace-nowrap">Name</th>
+                            <th className="px-3 py-3 whitespace-nowrap">Status</th>
+                            <th className="px-3 py-3 whitespace-nowrap">Start Date</th>
+                            <th className="px-3 py-3 whitespace-nowrap">End Date</th>
+                            <th className="px-3 py-3 whitespace-nowrap">Actions</th>
+                        </tr>
+                    </thead>
 
                 <tbody className="divide-y divide-gray-200">
                     {products?.map((product) => (
@@ -77,6 +85,18 @@ function Table({setData , setOpen}) {
                     ))}
                 </tbody>
             </table>
+            <div className=" mt-5 flex justify-end ">
+                    <Pagination
+                        current={currentPage}
+                        total={totalItems}
+                        pageSize={limit}
+                        onChange={handlePageChange}
+                        showSizeChanger={false}
+                        disabled={loading}
+                        className="ant-pagination-custom"
+                    />
+                </div>
+        </div>
         </div>
     );
 }

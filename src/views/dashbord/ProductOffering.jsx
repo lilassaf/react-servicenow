@@ -23,7 +23,7 @@ function ProductOffering() {
   useEffect(() => {
       if (localStorage.getItem('access_token')) {
         dispatch(getSpecs());
-        dispatch(getCats());
+        dispatch(getCats({ page: 1, limit: 99 }));
         dispatch(getChannels());
       } else {
         console.error('Auth token not found. Please login.');
@@ -69,11 +69,11 @@ function ProductOffering() {
           </div>
         </div>
 
-        <div className='flex justify-center items-center py-5'>
-          <Table setData={setData} setOpen={setOpen} ></Table>
+        <div className='flex justify-center items-center py-5 h-137'>
+          <Table setData={setData} setOpen={setOpen} dispatch={dispatch} ></Table>
         </div>
          
-         <Form open={open} setOpen={setOpen} initialData={data} options={options}></Form>
+         <Form open={open} setOpen={setOpen} initialData={data} options={options} dispatch={dispatch}></Form>
 
 
       </div>
