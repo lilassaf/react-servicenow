@@ -15,9 +15,9 @@ function Table({setData , setOpen}) {
         limit
     } = useSelector((state) => state.productOfferingCategory);
 
-
-          
-      }, [dispatch]);
+useEffect(() => {
+        dispatch(getall({ page: 1, limit: 6 }));
+    }, [dispatch]);
   
       const handleDelete = async (productId) => {
           await dispatch(deleteCategory(productId));
