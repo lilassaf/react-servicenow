@@ -4,6 +4,7 @@ import { Popconfirm, Empty, Spin, Pagination } from 'antd';
 import { getall, deleteCategory } from '../../../features/servicenow/product-offering/productOfferingCategorySlice';
 
 function Table({setData , setOpen}) {
+
     const dispatch = useDispatch();
     const {
         data: products,
@@ -14,8 +15,7 @@ function Table({setData , setOpen}) {
         limit
     } = useSelector((state) => state.productOfferingCategory);
 
-     useEffect(() => {
-          dispatch(getall({ page: 1, limit: 6 }));
+
           
       }, [dispatch]);
   
@@ -24,7 +24,7 @@ function Table({setData , setOpen}) {
           // Refresh current page after deletion
           dispatch(getall({ page: currentPage, limit }));
       };
-      
+
   
       const handlePageChange = (page) => {
           dispatch(getall({ page, limit }));
@@ -100,6 +100,7 @@ function Table({setData , setOpen}) {
                                                     </tr>
                                                 ))
                                             )}
+
                 </tbody>
             </table>
             <div className=" mt-5 flex justify-end ">
@@ -113,7 +114,9 @@ function Table({setData , setOpen}) {
                         className="ant-pagination-custom"
                     />
                 </div>
+
         </div>
+
         </div>
     );
 }

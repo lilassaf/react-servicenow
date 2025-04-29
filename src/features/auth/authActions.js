@@ -41,10 +41,13 @@ export const registerUser = createAsyncThunk(
       return response.data;
     } catch (err) {
       if (err.response) {
-        // Server returned an error
-        return rejectWithValue(err.response.data.message || 'Registration failed');
+        // Ensure we return a string message, not an object
+        return rejectWithValue(
+          err.response.data?.message || 
+          err.response.data?.error_description || 
+          'Registration failed'
+        );
       } else {
-        // Network or other errors
         return rejectWithValue('An error occurred while registering. Please try again.');
       }
     }
