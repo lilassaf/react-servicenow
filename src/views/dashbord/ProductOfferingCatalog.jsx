@@ -11,7 +11,7 @@ function ProductOfferingCatalog() {
 
   return (
     <>
-      <div className='h-full'>
+      <div className='h-svh'>
         <div className='h-36 bg-cyan-700/40 flex items-end py-3 px-20'>
           <div className='flex w-full justify-between'>
 
