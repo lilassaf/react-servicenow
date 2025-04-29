@@ -1,5 +1,5 @@
 // Login.js
-import LoginForm from "@components/auth/loginform";
+import LoginForm from "@components/auth/LoginForm";
 import { Link } from "react-router-dom";
 import Logo from '@assets/nbg-e-omt.png';
 
